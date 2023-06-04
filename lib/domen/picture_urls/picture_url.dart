@@ -21,6 +21,7 @@ class PictureUrls {
     required this.smallS3,
   });
 
-  factory PictureUrls.fromJson(Map<String, dynamic> json) => _$PictureUrlsFromJson(json);
+  factory PictureUrls.fromJson(Map<String, dynamic> json) =>
+      _$PictureUrlsFromJson(json);
   Map<String, dynamic> toJson() => _$PictureUrlsToJson(this);
 }

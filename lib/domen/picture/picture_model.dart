@@ -18,6 +18,7 @@ class PictureModel {
     required this.pictureUrls,
   });
 
-  factory PictureModel.fromJson(Map<String, dynamic> json) => _$PictureModelFromJson(json);
+  factory PictureModel.fromJson(Map<String, dynamic> json) =>
+      _$PictureModelFromJson(json);
   Map<String, dynamic> toJson() => _$PictureModelToJson(this);
 }

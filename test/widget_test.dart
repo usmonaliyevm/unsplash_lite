@@ -8,7 +8,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:unsplash_lite/main.dart';
 import 'package:unsplash_lite/presentation/screens/home_screen.dart';
 
 void main() {

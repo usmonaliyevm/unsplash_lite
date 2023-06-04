@@ -24,14 +24,17 @@ class _ApiService implements ApiService {
   Future<List<PictureModel>> getRandomPictures(
     access,
     count,
+    query,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'client_id': access,
       r'count': count,
+      r'query': query,
     };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio
         .fetch<List<dynamic>>(_setStreamType<List<PictureModel>>(Options(
       method: 'GET',
@@ -40,7 +43,7 @@ class _ApiService implements ApiService {
     )
             .compose(
               _dio.options,
-              '/photos/random',
+              '/photos/random/',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -48,6 +51,62 @@ class _ApiService implements ApiService {
     var value = _result.data!
         .map((dynamic i) => PictureModel.fromJson(i as Map<String, dynamic>))
         .toList();
+    return value;
+  }
+
+  @override
+  Future<SearchPicture> getSearchPictures(
+    access,
+    query,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'client_id': access,
+      r'query': query,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<SearchPicture>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/search/photos/',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = SearchPicture.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<PictureExifModel> getPhotoInfo(
+    access,
+    id,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'client_id': access};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<PictureExifModel>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'photos/${id}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = PictureExifModel.fromJson(_result.data!);
     return value;
   }
 

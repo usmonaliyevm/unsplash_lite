@@ -13,7 +13,7 @@ ExifModel _$ExifModelFromJson(Map<String, dynamic> json) => ExifModel(
       exposureTime: json['exposure_time'] as String?,
       aperture: json['aperture'] as String?,
       focalLength: json['focal_length'] as String?,
-      iso: json['iso'] as String?,
+      iso: json['iso'] as int?,
     );
 
 Map<String, dynamic> _$ExifModelToJson(ExifModel instance) => <String, dynamic>{

@@ -24,17 +24,14 @@ class _ApiService implements ApiService {
   Future<List<PictureModel>> getRandomPictures(
     access,
     count,
-    query,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'client_id': access,
       r'count': count,
-      r'query': query,
     };
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio
         .fetch<List<dynamic>>(_setStreamType<List<PictureModel>>(Options(
       method: 'GET',
@@ -66,7 +63,45 @@ class _ApiService implements ApiService {
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<SearchPicture>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/search/photos/',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = SearchPicture.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SearchPicture> getSearchPhotosCutsom(
+    access,
+    query,
+    orientation,
+    color,
+    sortBy,
+    quality,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'client_id': access,
+      r'query': query,
+      r'orientation': orientation,
+      r'color': color,
+      r'sort_by': sortBy,
+      r'quality': quality,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio
         .fetch<Map<String, dynamic>>(_setStreamType<SearchPicture>(Options(
       method: 'GET',
@@ -101,7 +136,7 @@ class _ApiService implements ApiService {
     )
             .compose(
               _dio.options,
-              'photos/${id}',
+              '/photos/${id}',
               queryParameters: queryParameters,
               data: _data,
             )

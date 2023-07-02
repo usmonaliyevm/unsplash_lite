@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -5,6 +6,7 @@ import 'package:unsplash_lite/data/api_service.dart';
 import 'package:unsplash_lite/domen/picture/picture_model.dart';
 import 'package:unsplash_lite/domen/searche_picture/search_picture.dart';
 import 'package:unsplash_lite/presentation/screens/photo_info.dart';
+import 'package:unsplash_lite/presentation/screens/search_screen.dart';
 import 'package:unsplash_lite/utils/app_consts.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,11 +26,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     final apiservice = ApiService(Dio());
-    pictures = apiservice.getRandomPictures(access, 30, "");
+    pictures = apiservice.getRandomPictures(
+      access,
+      30,
+    );
     latest = apiservice.getSearchPictures(access, "latest");
     fruits = apiservice.getSearchPictures(access, "fruits");
     cakes = apiservice.getSearchPictures(access, "cakes");
     cars = apiservice.getSearchPictures(access, "cars");
+
     super.initState();
   }
 
@@ -42,6 +48,52 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: 40,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SearchScreen(),
+                            ),
+                          ),
+                          child: IgnorePointer(
+                            child: TextField(
+                              decoration: InputDecoration(
+                                hintText: "Search",
+                                focusedBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                enabledBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  borderSide: BorderSide.none,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.search),
+                      const SizedBox(width: 8),
+                    ],
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Text(
@@ -71,8 +123,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       PhotoInfo(id: snapshot.data![index].id),
                                 ),
                               ),
-                              child: Image.network(
-                                  snapshot.data![index].pictureUrls.regular),
+                              child: CachedNetworkImage(
+                                imageUrl:
+                                    snapshot.data![index].pictureUrls.regular,
+                              ),
                             ),
                             const SizedBox(
                               width: 16,
@@ -112,11 +166,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => PhotoInfo(
-                                        id: snapshot.data!.results[index].id),
+                                      id: snapshot.data!.results[index].id,
+                                    ),
                                   ),
                                 ),
-                                child: Image.network(
-                                  snapshot
+                                child: CachedNetworkImage(
+                                  imageUrl: snapshot
                                       .data!.results[index].pictureUrls.regular,
                                 ),
                               ),
@@ -152,22 +207,27 @@ class _HomeScreenState extends State<HomeScreen> {
                           scrollDirection: Axis.horizontal,
                           physics: const BouncingScrollPhysics(),
                           itemCount: snapshot.data!.results.length,
-                          itemBuilder: (context, index) => Row(children: [
-                            GestureDetector(
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PhotoInfo(
-                                      id: snapshot.data!.results[index].id),
+                          itemBuilder: (context, index) => Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PhotoInfo(
+                                      id: snapshot.data!.results[index].id,
+                                    ),
+                                  ),
+                                ),
+                                child: CachedNetworkImage(
+                                  imageUrl: snapshot
+                                      .data!.results[index].pictureUrls.regular,
                                 ),
                               ),
-                              child: Image.network(snapshot
-                                  .data!.results[index].pictureUrls.regular),
-                            ),
-                            const SizedBox(
-                              width: 16,
-                            ),
-                          ]),
+                              const SizedBox(
+                                width: 16,
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     } else {
@@ -195,22 +255,27 @@ class _HomeScreenState extends State<HomeScreen> {
                           scrollDirection: Axis.horizontal,
                           physics: const BouncingScrollPhysics(),
                           itemCount: snapshot.data!.results.length,
-                          itemBuilder: (context, index) => Row(children: [
-                            GestureDetector(
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PhotoInfo(
-                                      id: snapshot.data!.results[index].id),
+                          itemBuilder: (context, index) => Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PhotoInfo(
+                                      id: snapshot.data!.results[index].id,
+                                    ),
+                                  ),
+                                ),
+                                child: CachedNetworkImage(
+                                  imageUrl: snapshot
+                                      .data!.results[index].pictureUrls.regular,
                                 ),
                               ),
-                              child: Image.network(snapshot
-                                  .data!.results[index].pictureUrls.regular),
-                            ),
-                            const SizedBox(
-                              width: 16,
-                            ),
-                          ]),
+                              const SizedBox(
+                                width: 16,
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     } else {
@@ -238,22 +303,27 @@ class _HomeScreenState extends State<HomeScreen> {
                           scrollDirection: Axis.horizontal,
                           physics: const BouncingScrollPhysics(),
                           itemCount: snapshot.data!.results.length,
-                          itemBuilder: (context, index) => Row(children: [
-                            GestureDetector(
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PhotoInfo(
-                                      id: snapshot.data!.results[index].id),
+                          itemBuilder: (context, index) => Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PhotoInfo(
+                                      id: snapshot.data!.results[index].id,
+                                    ),
+                                  ),
+                                ),
+                                child: CachedNetworkImage(
+                                  imageUrl: snapshot
+                                      .data!.results[index].pictureUrls.regular,
                                 ),
                               ),
-                              child: Image.network(snapshot
-                                  .data!.results[index].pictureUrls.regular),
-                            ),
-                            const SizedBox(
-                              width: 16,
-                            ),
-                          ]),
+                              const SizedBox(
+                                width: 16,
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     } else {

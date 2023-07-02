@@ -12,7 +12,7 @@ class ExifModel {
   final String? aperture;
   @JsonKey(name: "focal_length")
   final String? focalLength;
-  final String? iso;
+  final int? iso;
 
   ExifModel({
     this.make,

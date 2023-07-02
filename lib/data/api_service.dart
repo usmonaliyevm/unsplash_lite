@@ -13,7 +13,6 @@ abstract class ApiService {
   Future<List<PictureModel>> getRandomPictures(
     @Query("client_id") String access,
     @Query("count") int count,
-    @Query("query") String? query,
   );
 
   @GET("/search/photos/")
@@ -21,7 +20,16 @@ abstract class ApiService {
     @Query("client_id") String access,
     @Query("query") String? query,
   );
-  @GET("photos/{id}")
+  @GET("/search/photos/")
+  Future<SearchPicture> getSearchPhotosCutsom(
+    @Query("client_id") String access,
+    @Query("query") String? query,
+    @Query("orientation") String? orientation,
+    @Query("color") String? color,
+    @Query("sort_by") String? sortBy,
+    @Query("quality") String? quality,
+  );
+  @GET("/photos/{id}")
   Future<PictureExifModel> getPhotoInfo(
     @Query("client_id") String access,
     @Path("id") String id,

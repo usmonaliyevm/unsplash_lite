@@ -8,7 +8,6 @@ import 'package:shimmer/shimmer.dart';
 import 'package:unsplash_lite/data/api_service.dart';
 import 'package:unsplash_lite/domen/picture_exif/picture_exif_model.dart';
 import 'package:unsplash_lite/widgets/custom_exif_model.dart';
-
 import '../../utils/app_consts.dart';
 
 class PhotoInfo extends StatelessWidget {
@@ -151,22 +150,23 @@ class PhotoInfo extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      vertical: 13.0, horizontal: 20),
+                      vertical: 15.0, horizontal: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       const CustomExifModel(
                           text1: "View",
-                          text2: "null",
+                          text2: "Mavjud emas",
                           onWhere: OnWhere.center),
                       const CustomExifModel(
                           text1: "Downland",
-                          text2: "null",
+                          text2: "Mavjud emas",
                           onWhere: OnWhere.center),
                       CustomExifModel(
-                          text1: "Likes",
-                          text2: snapshot.data!.likes.toString(),
-                          onWhere: OnWhere.center),
+                        text1: "Likes",
+                        text2: snapshot.data!.likes.toString(),
+                        onWhere: OnWhere.center,
+                      ),
                     ],
                   ),
                 ),

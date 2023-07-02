@@ -45,6 +45,7 @@ dependencies:
   shimmer: ^3.0.0
   gallery_saver: ^2.3.2
   flutter_file_downloader: ^1.1.2
+  image_gallery_saver: ^2.0.2
 
 dev_dependencies:
   flutter_test:

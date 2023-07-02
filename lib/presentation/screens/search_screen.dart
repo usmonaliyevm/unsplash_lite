@@ -297,7 +297,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           );
                         },
                       )
-                    : const CircularProgressIndicator();
+                    : const Center(child: CircularProgressIndicator());
               },
             ))
           ],

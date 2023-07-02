@@ -17,6 +17,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   late Future<List<PictureModel>> pictures;
   late Future<SearchPicture> latest;
   late Future<SearchPicture> fruits;
@@ -40,299 +42,282 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-                SizedBox(
-                  height: 40,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: InkWell(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SearchScreen(),
-                            ),
-                          ),
-                          child: IgnorePointer(
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: "Search",
-                                focusedBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    width: 1,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                enabledBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    width: 1,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                contentPadding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide.none,
-                                ),
+    return Scaffold(
+      drawer: Container(
+        width: 300,
+        color: Colors.white,
+      ),
+      key: _scaffoldKey,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 35),
+              SizedBox(
+                height: 40,
+                child: Row(
+                  children: [
+                    InkWell(
+                      onTap: () => _scaffoldKey.currentState!.openDrawer(),
+                      child: Image.asset(
+                        "assets/burger.png",
+                        cacheHeight: 15,
+                        cacheWidth: 15,
+                      ),
+                    ),
+                    const Spacer(),
+                    InkWell(
+                        onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SearchScreen(),
                               ),
                             ),
+                        child: const Icon(Icons.search)),
+                    const SizedBox(width: 15),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "Random",
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ),
+              FutureBuilder<List<PictureModel>>(
+                future: pictures,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return SizedBox(
+                      height: 120,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) => Row(children: [
+                          GestureDetector(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    PhotoInfo(id: snapshot.data![index].id),
+                              ),
+                            ),
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  snapshot.data![index].pictureUrls.regular,
+                            ),
                           ),
-                        ),
+                          const SizedBox(
+                            width: 16,
+                          ),
+                        ]),
                       ),
-                      const SizedBox(width: 8),
-                      const Icon(Icons.search),
-                      const SizedBox(width: 8),
-                    ],
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "Latest",
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text(
-                    "Random",
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                ),
-                FutureBuilder<List<PictureModel>>(
-                  future: pictures,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return SizedBox(
-                        height: 120,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) => Row(children: [
+              ),
+              FutureBuilder<SearchPicture>(
+                future: latest,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return SizedBox(
+                      height: 120,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: snapshot.data!.results.length,
+                        itemBuilder: (context, index) => Row(
+                          children: [
                             GestureDetector(
                               onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      PhotoInfo(id: snapshot.data![index].id),
+                                  builder: (context) => PhotoInfo(
+                                    id: snapshot.data!.results[index].id,
+                                  ),
                                 ),
                               ),
                               child: CachedNetworkImage(
-                                imageUrl:
-                                    snapshot.data![index].pictureUrls.regular,
+                                imageUrl: snapshot
+                                    .data!.results[index].pictureUrls.regular,
                               ),
                             ),
                             const SizedBox(
                               width: 16,
                             ),
-                          ]),
+                          ],
                         ),
-                      );
-                    } else {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text(
-                    "Latest",
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                    ),
+                      ),
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "Fruits",
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
                   ),
                 ),
-                FutureBuilder<SearchPicture>(
-                  future: latest,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return SizedBox(
-                        height: 120,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: snapshot.data!.results.length,
-                          itemBuilder: (context, index) => Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PhotoInfo(
-                                      id: snapshot.data!.results[index].id,
-                                    ),
+              ),
+              FutureBuilder<SearchPicture>(
+                future: fruits,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return SizedBox(
+                      height: 120,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: snapshot.data!.results.length,
+                        itemBuilder: (context, index) => Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PhotoInfo(
+                                    id: snapshot.data!.results[index].id,
                                   ),
                                 ),
-                                child: CachedNetworkImage(
-                                  imageUrl: snapshot
-                                      .data!.results[index].pictureUrls.regular,
-                                ),
                               ),
-                              const SizedBox(
-                                width: 16,
+                              child: CachedNetworkImage(
+                                imageUrl: snapshot
+                                    .data!.results[index].pictureUrls.regular,
                               ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(
+                              width: 16,
+                            ),
+                          ],
                         ),
-                      );
-                    } else {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text(
-                    "Fruits",
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                    ),
+                      ),
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "Cakes",
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
                   ),
                 ),
-                FutureBuilder<SearchPicture>(
-                  future: fruits,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return SizedBox(
-                        height: 120,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: snapshot.data!.results.length,
-                          itemBuilder: (context, index) => Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PhotoInfo(
-                                      id: snapshot.data!.results[index].id,
-                                    ),
+              ),
+              FutureBuilder<SearchPicture>(
+                future: cakes,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return SizedBox(
+                      height: 120,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: snapshot.data!.results.length,
+                        itemBuilder: (context, index) => Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PhotoInfo(
+                                    id: snapshot.data!.results[index].id,
                                   ),
                                 ),
-                                child: CachedNetworkImage(
-                                  imageUrl: snapshot
-                                      .data!.results[index].pictureUrls.regular,
-                                ),
                               ),
-                              const SizedBox(
-                                width: 16,
+                              child: CachedNetworkImage(
+                                imageUrl: snapshot
+                                    .data!.results[index].pictureUrls.regular,
                               ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(
+                              width: 16,
+                            ),
+                          ],
                         ),
-                      );
-                    } else {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text(
-                    "Cakes",
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                    ),
+                      ),
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "Cars",
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
                   ),
                 ),
-                FutureBuilder<SearchPicture>(
-                  future: cakes,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return SizedBox(
-                        height: 120,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: snapshot.data!.results.length,
-                          itemBuilder: (context, index) => Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PhotoInfo(
-                                      id: snapshot.data!.results[index].id,
-                                    ),
+              ),
+              FutureBuilder<SearchPicture>(
+                future: cars,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return SizedBox(
+                      height: 120,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: snapshot.data!.results.length,
+                        itemBuilder: (context, index) => Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PhotoInfo(
+                                    id: snapshot.data!.results[index].id,
                                   ),
                                 ),
-                                child: CachedNetworkImage(
-                                  imageUrl: snapshot
-                                      .data!.results[index].pictureUrls.regular,
-                                ),
                               ),
-                              const SizedBox(
-                                width: 16,
+                              child: CachedNetworkImage(
+                                imageUrl: snapshot
+                                    .data!.results[index].pictureUrls.regular,
                               ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(
+                              width: 16,
+                            ),
+                          ],
                         ),
-                      );
-                    } else {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text(
-                    "Cars",
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                ),
-                FutureBuilder<SearchPicture>(
-                  future: cars,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return SizedBox(
-                        height: 120,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: snapshot.data!.results.length,
-                          itemBuilder: (context, index) => Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PhotoInfo(
-                                      id: snapshot.data!.results[index].id,
-                                    ),
-                                  ),
-                                ),
-                                child: CachedNetworkImage(
-                                  imageUrl: snapshot
-                                      .data!.results[index].pictureUrls.regular,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 16,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    } else {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
-              ],
-            ),
+                      ),
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+            ],
           ),
         ),
       ),
